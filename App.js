@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "./src/screens/HomeScreen";
 import SplashScreen from "./src/screens/SplashScreen";
+import NoteEdit from "./src/screens/NoteEdit";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,12 @@ export default function App() {
           name="Home"
           component={HomeScreen}
           options={{ title: "My Notes", headerShown: false }}
+        />
+
+        <Stack.Screen 
+        name = 'EditNote' 
+        component={NoteEdit}
+        options={{headerShown: false}}
         />
       </Stack.Navigator>
     </NavigationContainer>
