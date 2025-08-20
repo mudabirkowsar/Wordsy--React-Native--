@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
+import Entypo from 'react-native-vector-icons/Entypo';
+
 const dummyTodos = [
   { id: '1', text: 'Buy groceries' },
   { id: '2', text: 'Finish React Native project' },
@@ -50,7 +52,7 @@ export default function Todos() {
 
       {/* Floating Add Button */}
       <TouchableOpacity style={styles.fab}>
-        <Text style={styles.fabText}>+</Text>
+        <Entypo name="add-to-list" color="#fff" size={24} />
       </TouchableOpacity>
     </View>
   );
@@ -93,7 +95,8 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#1e90ff',
+    // backgroundColor: '#1e90ff',
+    backgroundColor:"black",
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,
