@@ -59,11 +59,11 @@ export default function HomeScreen() {
       </View>
 
       {/* Main Content */}
-      <ScrollView style={{ marginTop: 10 }}>
-        {activeTab === "Notes" && <Notes />}
-        {activeTab === "To-do" && <Todos />}
-        {activeTab === "Favorite Notes" && <FavoriteNotes />}
-      </ScrollView>
+      <View style={{flex:1}}>
+        {activeTab === "Notes" && <Notes/>}
+        {activeTab === "To-do" && <Todos/>}
+        {activeTab === "Favorite Notes" && <FavoriteNotes/>}
+      </View>
     </View>
   );
 }
@@ -73,8 +73,10 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     paddingTop: 50,
+    height:"100%",
+    width:'100%',
     backgroundColor: "#fff",
-    flex: 1,
+    // flex: 1,
   },
 
   // Header
