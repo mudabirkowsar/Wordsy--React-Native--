@@ -1,12 +1,13 @@
 import {
   View, Text, StyleSheet, FlatList, Pressable, Alert, TouchableOpacity, Modal
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Vibration } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DUMMY_HAPTIC_DURATION = 20;
 const dummyNotes = [
@@ -75,15 +76,34 @@ const dummyNotes = [
   },
 ]
 
-
-
-
 export default function Notes() {
   const [notes, setNotes] = useState(dummyNotes);
   const [selectedNote, setSelectedNote] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [lockPassword, setLockPassowrd] = useState('')
 
   const navigation = useNavigation()
+
+  useEffect(() => {
+    AsyncStorage.getItem("lockPassword").then(password => {
+      if (password) {
+        setLockPassowrd(password);
+        // Alert.alert(lockPassword)
+      }
+    })
+  }, [])
+
+  const handleLockOption = () => {
+    Vibration.vibrate(DUMMY_HAPTIC_DURATION);
+    if (!lockPassword) {
+      // Alert.alert("Set a lock password");
+      navigation.navigate("SetLock");
+    }
+    else {
+      // Alert.alert("Enter your lock password");
+      navigation.navigate("CheckPassword");
+    }
+  }
 
   const handleLongPress = (note) => {
     Vibration.vibrate(DUMMY_HAPTIC_DURATION);
@@ -121,7 +141,9 @@ export default function Notes() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Notes List</Text>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleLockOption}
+        >
           <Ionicons name="lock-closed-outline" size={20} color="#000" />
         </TouchableOpacity>
       </View>
@@ -301,10 +323,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   date: {
-  fontSize: 12,
-  color: "#888",
-  marginTop: 10,
-  textAlign: "right",
-  fontStyle: "italic",
-},
+    fontSize: 12,
+    color: "#888",
+    marginTop: 10,
+    textAlign: "right",
+    fontStyle: "italic",
+  },
 });
