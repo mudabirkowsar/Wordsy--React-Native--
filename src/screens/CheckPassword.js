@@ -80,7 +80,7 @@ export default function CheckPassword({ navigation }) {
                 style={styles.key}
                 onPress={() => {
                   if (item === "⌫") handleDelete();
-                  else if (item !== "") handlePress(item); 
+                  else if (item !== "") handlePress(item);
                 }}
               >
                 <Text style={styles.keyText}>{item}</Text>

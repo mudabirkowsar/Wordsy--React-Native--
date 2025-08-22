@@ -1,11 +1,17 @@
 import {
-  View, Text, StyleSheet, FlatList, Pressable, Alert, TouchableOpacity, Modal
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Pressable,
+  Alert,
+  TouchableOpacity,
+  Modal
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Vibration } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import Entypo from 'react-native-vector-icons/Entypo';
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -14,96 +20,94 @@ const dummyNotes = [
   {
     id: "1",
     title: "Shopping List",
-    description: "This shopping list is a comprehensive reminder of everything I need to purchase this week. I must buy milk, bread, eggs, butter, and fresh fruits like apples, bananas, and oranges for daily consumption. Additionally, I need to pick up some vegetables such as spinach, carrots, potatoes, onions, and tomatoes to prepare meals for the next few days. Snacks like biscuits, chips, and chocolates should also be on the list for evening tea and family time. I want to ensure I get cereals, oats, and coffee as well for my morning routine. Don’t forget spices like turmeric, cumin, coriander powder, and garam masala to keep cooking flavorful. I also need to check if we are low on cooking oil, rice, and lentils. Finally, I will purchase cleaning supplies like dish soap, detergent, and sanitizer. This list should cover all essentials, and I’ll update it if I remember more items before heading to the store.",
+    description: "This shopping list is a detailed reminder of everything I need to purchase for the upcoming week. I must buy milk, eggs, bread, butter, and cheese for daily breakfasts. Additionally, I need fresh fruits like apples, bananas, and oranges. Vegetables such as spinach, carrots, tomatoes, onions, and potatoes are necessary for lunches and dinners. Snacks like biscuits, chocolates, and chips should also be included for small breaks. Don’t forget cereals, oats, coffee, and tea for morning routines. I also need cleaning supplies such as dish soap, detergent, and hand sanitizer. Planning for any forgotten essentials, I will also check if rice, lentils, and cooking oil are sufficient. This organized approach will ensure I don’t forget anything and help maintain a smooth household routine for the week.",
+    author: "Mudabir",
     pinned: false,
-    date: "2025-08-21",
+    date: "2025-08-21"
   },
   {
     id: "2",
     title: "Work Tasks",
-    description: "Today’s work tasks are critical and need to be completed with focus and discipline. First, I must finish the user interface design for the new mobile app we are developing. The design should be minimal, user-friendly, and aligned with our brand’s visual guidelines. After that, I need to prepare the monthly performance report, including details about project progress, resource allocation, and productivity metrics. This report will be shared with management, so it must be accurate and clearly formatted. I also have to schedule a team meeting to discuss upcoming deliverables and deadlines. During the meeting, I will address any blockers, assign responsibilities, and encourage collaboration. In addition, I must review pull requests submitted by team members to ensure code quality and maintain project standards. Lastly, I plan to write an email to our client summarizing the week’s progress and the next milestones. If time permits, I will also explore automation tools to improve our workflow and productivity, ensuring we stay ahead of deadlines and deliver top-quality work.",
+    description: "Today’s work tasks require careful planning and focused execution. I need to finish designing the user interface for the new mobile app, ensuring it is minimal, user-friendly, and aligns with the brand’s visual guidelines. After completing the UI, I will prepare the monthly performance report detailing project progress, resource allocation, and team productivity metrics. Scheduling a team meeting is also important to discuss upcoming deliverables and address blockers. Reviewing pull requests submitted by team members will help maintain code quality. Additionally, I need to draft an email summarizing the week’s progress to the client. If time allows, I plan to research automation tools to enhance workflow efficiency and productivity, aiming to meet deadlines effectively.",
+    author: "Khanday",
     pinned: false,
-    date: "2025-08-20",
+    date: "2025-08-20"
   },
   {
     id: "3",
-    title: "Ideas",
-    description: "One of the most exciting ideas I’ve been considering lately is creating an app for tracking daily habits with AI integration. The app could help users build consistency in areas such as fitness, learning, meditation, or even managing finances. Users would log their habits, and the app would use AI to provide personalized suggestions, encouragement, and feedback. For example, if a user sets a goal to exercise regularly, the AI could analyze their patterns and recommend optimal times for workouts. The app could integrate with wearable devices to track progress in real time and provide alerts or reminders when needed. Another potential feature is gamification—rewards, badges, and progress streaks to keep users motivated. Social features could allow people to share milestones with friends and form accountability groups. Over time, the app could use machine learning to adapt to user behavior and refine recommendations. If developed properly, this idea has the potential to improve productivity, health, and lifestyle for thousands of users worldwide, making daily habits easier to track and sustain over time.",
+    title: "Ideas for App",
+    description: "I am brainstorming ideas for a new mobile app focused on productivity and habit tracking. Users will log daily habits, track progress, and receive personalized suggestions from an AI assistant. The app could integrate wearable devices to monitor steps, heart rate, and sleep patterns. Gamification features such as streaks, rewards, and achievements will motivate users to maintain consistency. Social sharing options will allow users to share progress with friends or groups for accountability. Additionally, the app will provide weekly summaries, insights, and reminders to ensure tasks and habits are maintained. Over time, AI could analyze user patterns and suggest optimized routines. This combination of habit tracking, AI recommendations, and gamification could help users improve productivity and wellness in a structured, engaging manner.",
+    author: "Mudabir",
     pinned: false,
-    date: "2025-08-19",
+    date: "2025-08-19"
   },
   {
     id: "4",
     title: "Travel Plan",
-    description: "I am planning a trip to Goa in December, and I want it to be memorable and relaxing. My primary goal is to explore the beautiful beaches, such as Baga, Calangute, Anjuna, and Palolem, each offering a unique experience with scenic views, soft sand, and relaxing waves. Apart from beaches, I want to visit Aguada Fort, Chapora Fort, and Basilica of Bom Jesus to explore the history and culture of the region. Nightlife is another highlight, and I plan to check out famous clubs, beach parties, and live music events. Food is also a priority, so I will try authentic Goan seafood, especially prawn curry, fish thali, and bebinca for dessert. Adventure activities like parasailing, scuba diving, and jet skiing are on my list as well. I also plan to book a comfortable stay near the beach so I can enjoy sunrise and sunset views every day. Overall, this travel plan is intended to provide a balanced combination of relaxation, adventure, and cultural exploration. I will document each day, take photos, and make sure the trip is enriching and memorable for everyone joining.",
+    description: "I am planning a detailed travel itinerary for a trip to Europe in December. The plan includes visiting France, Italy, and Spain. In France, I want to explore Paris, seeing the Eiffel Tower, Louvre Museum, and Notre-Dame Cathedral. In Italy, Rome, Florence, and Venice are key destinations, each offering unique cultural, historical, and culinary experiences. Spain will include Barcelona, Madrid, and Seville, with a focus on architecture, tapas, and flamenco shows. Accommodation will be booked near city centers to save commuting time. I will also plan local transportation, museum tickets, and guided tours in advance. Documenting each day with photos and notes is essential to preserve memories and create a travel blog. Overall, this itinerary ensures a balance of sightseeing, relaxation, and cultural immersion.",
+    author: "Khanday",
     pinned: false,
-    date: "2025-08-18",
+    date: "2025-08-18"
   },
   {
     id: "5",
     title: "Book Summary",
-    description: "Recently, I finished reading an inspiring book that emphasizes the importance of discipline and consistent effort in achieving success. The author shares personal stories, real-world examples, and practical exercises to highlight how small, repeated actions compound over time to bring meaningful results. One of the key lessons I learned is that motivation is fleeting, but discipline sustains progress. Instead of waiting for the perfect moment, the book advises creating routines and sticking to them, even when it feels difficult. Another takeaway is the significance of focus—learning to say no to distractions and prioritizing what truly matters. The book also discusses resilience, urging readers to embrace failure as a stepping stone to growth rather than a setback. I found the writing style engaging and filled with actionable advice rather than just theories. I plan to implement strategies such as creating a structured daily schedule, tracking habits, and reviewing progress weekly. Overall, the book is a practical guide to achieving long-term success, self-improvement, and personal growth.",
+    description: "I recently read a book about personal growth and discipline, which emphasizes creating daily routines to achieve long-term goals. The book explains that motivation is temporary, while consistent actions yield real results over time. Through multiple case studies, the author illustrates how successful individuals structure their day to maximize productivity. Key strategies include time blocking, prioritizing high-impact tasks, tracking progress, and reflecting on accomplishments. The book also highlights the importance of resilience and adapting to failures as opportunities to learn. Exercises and challenges at the end of each chapter encourage readers to implement these principles immediately. By following these guidelines, one can cultivate self-discipline, increase focus, and achieve meaningful personal and professional growth over time.",
+    author: "Mudabir",
     pinned: false,
-    date: "2025-08-17",
+    date: "2025-08-17"
   },
   {
     id: "6",
     title: "Fitness Goals",
-    description: "My fitness goals for the next three months are designed to improve both strength and endurance while maintaining a balanced lifestyle. I plan to follow a structured workout plan that includes cardio, strength training, and flexibility exercises. My cardio routine will include jogging three times a week and cycling on weekends. Strength training will alternate between upper body, lower body, and core workouts at least four times a week. Flexibility will be improved through yoga sessions twice weekly to prevent injury and enhance mobility. Nutrition will play a crucial role, so I aim to maintain a balanced diet rich in protein, complex carbohydrates, healthy fats, and fiber. I will avoid processed foods, reduce sugar intake, and stay hydrated. To track my progress, I’ll use a fitness app and wearable devices to monitor calories burned, heart rate, and sleep quality. My ultimate goal is to lose fat, gain muscle, and develop sustainable healthy habits that I can maintain throughout the year.",
+    description: "Over the next three months, I plan to improve my overall fitness, focusing on strength, endurance, and flexibility. My workout routine will include cardio exercises like running, cycling, and swimming three to four times a week. Strength training will focus on major muscle groups, including chest, back, legs, and core. Flexibility sessions through yoga and stretching exercises will be conducted twice weekly. Nutrition is a key component, ensuring adequate protein intake, balanced carbohydrates, healthy fats, and proper hydration. I will track progress with a fitness app, monitoring weight, body fat percentage, and workout performance. This holistic plan will help achieve weight management goals, increase stamina, and maintain a healthy lifestyle sustainably.",
+    author: "Khanday",
     pinned: false,
-    date: "2025-08-16",
+    date: "2025-08-16"
   },
   {
     id: "7",
     title: "Learning React Native",
-    description: "I have set a goal to learn React Native thoroughly over the next few weeks. My learning plan begins with understanding the fundamentals of React, including components, props, state, and lifecycle methods. After mastering the basics, I will move on to React Native-specific concepts such as View, Text, ScrollView, FlatList, and Modal. I also want to understand navigation deeply using React Navigation, including stack, tab, and drawer navigators. Handling API calls, managing asynchronous code with async/await, and integrating Redux for state management are also included in my plan. To make my learning practical, I’ll build small projects like a to-do app, notes app, and weather app. Later, I will explore advanced topics like animations, performance optimization, testing, and deployment to both iOS and Android platforms. My ultimate goal is to gain enough confidence to develop, publish, and maintain fully functional mobile apps, while learning best practices in React Native development and state management. This structured approach ensures continuous learning and hands-on experience throughout the process.",
+    description: "I am dedicating the next month to mastering React Native. The learning plan starts with understanding React fundamentals including components, state, and props. I will then focus on React Native-specific features such as styling, navigation, FlatList, and handling gestures. Managing asynchronous operations with async/await and integrating APIs is also a priority. Redux will be used for state management across larger projects. Building small projects like a notes app, todo app, and weather app will provide hands-on experience. I also plan to explore animations, testing, performance optimization, and deployment to both iOS and Android. This structured approach ensures continuous learning, real-world practice, and a deep understanding of mobile development.",
+    author: "Mudabir",
     pinned: false,
-    date: "2025-08-15",
+    date: "2025-08-15"
   },
   {
     id: "8",
     title: "Daily Journal",
-    description: "Today has been quite eventful, and I want to document everything that happened. I started my day with a refreshing morning jog, which instantly boosted my energy levels. After breakfast, I focused on completing pending work tasks, which gave me a sense of accomplishment. Later in the afternoon, I dedicated time to reading a book that I’ve been meaning to finish for weeks. The story was engaging and kept me hooked for hours, providing both inspiration and learning. In the evening, I caught up with an old friend over a phone call, and we shared many memories and laughter. Before dinner, I practiced meditation for 20 minutes, helping me calm my mind and reflect on the day. Overall, journaling today reminds me to cherish simple moments, maintain balance between work, learning, and personal relationships, and plan for a productive tomorrow. Writing down my experiences also helps me track progress and maintain gratitude for everyday life.",
+    description: "Today was a productive and reflective day. I started the morning with meditation and a 5-kilometer jog, which energized me for the day. I then focused on completing pending tasks at work, ensuring deadlines were met efficiently. During lunch, I spent time reading an insightful chapter of a book on personal development. The afternoon included a team brainstorming session to improve workflow and collaboration. In the evening, I connected with friends virtually, sharing updates and experiences. Writing down reflections and planning tomorrow’s tasks provided clarity and motivation. This journaling habit helps maintain mental wellness, track achievements, and set intentions for the upcoming days.",
+    author: "Khanday",
     pinned: false,
-    date: "2025-08-14",
-  },
-  {
-    id: "9",
-    title: "Project Ideas",
-    description: "I want to brainstorm some project ideas that could potentially be developed into real applications. One idea is a personal finance manager app that helps users track expenses, set savings goals, and receive AI-driven advice. Another idea is a smart recipe app that suggests meals based on ingredients available at home, reducing food waste and saving money. A third idea could be a productivity tool with integrated task management, note-taking, and calendar syncing, allowing users to organize their lives efficiently. I am also considering a language learning app that uses gamification and AI to personalize lessons. For developers, an open-source boilerplate project that simplifies setting up full-stack applications could be highly valuable. To select the best idea, I will evaluate factors like feasibility, demand, scalability, and personal interest. Once finalized, I plan to create a roadmap, identify required tools, and start building a minimum viable product, ensuring proper planning, execution, and testing at every stage.",
-    pinned: false,
-    date: "2025-08-13",
-  },
-]
+    date: "2025-08-14"
+  }
+];
+
 
 export default function Notes() {
   const [notes, setNotes] = useState(dummyNotes);
   const [selectedNote, setSelectedNote] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [lockPassword, setLockPassowrd] = useState('')
+  const [lockPassword, setLockPassowrd] = useState('');
 
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   useEffect(() => {
     AsyncStorage.getItem("lockPassword").then(password => {
       if (password) {
         setLockPassowrd(password);
-        // Alert.alert(lockPassword)
       }
-    })
-  }, [])
+    });
+  }, []);
 
   const handleLockOption = () => {
     Vibration.vibrate(DUMMY_HAPTIC_DURATION);
     if (!lockPassword) {
-      // Alert.alert("Set a lock password");
       navigation.navigate("SetLock");
-    }
-    else {
-      // Alert.alert("Enter your lock password");
+    } else {
       navigation.navigate("CheckPassword");
     }
-  }
+  };
 
   const handleLongPress = (note) => {
     Vibration.vibrate(DUMMY_HAPTIC_DURATION);
@@ -115,22 +119,17 @@ export default function Notes() {
     setModalVisible(false);
     if (action === "pin") {
       setNotes((prevNotes) => {
-        // Toggle pin
         const updatedNotes = prevNotes.map((n) =>
           n.id === selectedNote.id ? { ...n, pinned: !n.pinned } : n
         );
-
-        // Sort so pinned notes always come first
         updatedNotes.sort((a, b) => {
           if (a.pinned === b.pinned) return 0;
           return a.pinned ? -1 : 1;
         });
-
         return updatedNotes;
       });
     } else if (action === "edit") {
       navigation.navigate("EditNote", { note: selectedNote });
-      // Alert.alert("Edit", `Editing ${selectedNote.title}`);
     } else if (action === "delete") {
       Alert.alert("Deleted", `${selectedNote.title} deleted!`);
     }
@@ -141,9 +140,7 @@ export default function Notes() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Notes List</Text>
-        <TouchableOpacity
-          onPress={handleLockOption}
-        >
+        <TouchableOpacity onPress={handleLockOption}>
           <Ionicons name="lock-closed-outline" size={20} color="#000" />
         </TouchableOpacity>
       </View>
@@ -175,22 +172,25 @@ export default function Notes() {
                 {item.description}
               </Text>
 
-              {/* Date */}
-              <Text style={styles.date}>
-                {new Date(item.date).toLocaleDateString("en-US", {
-                  weekday: "short",
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </Text>
+              {/* Author + Date Row */}
+              <View style={styles.authorDateRow}>
+                <Text style={styles.authorText}>{item.author || "Unknown"}</Text>
+                <Text style={styles.date}>
+                  {new Date(item.date).toLocaleDateString("en-US", {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </Text>
+              </View>
             </View>
           </Pressable>
         )}
       />
 
       {/* Floating Button */}
-      <TouchableOpacity style={styles.fab}>
+      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNote")}>
         <MaterialCommunityIcons name="note-plus-outline" color="white" size={24} />
       </TouchableOpacity>
 
@@ -273,6 +273,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#444",
   },
+  authorDateRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  authorText: {
+    fontSize: 12,
+    color: "#555",
+    fontStyle: "italic",
+  },
+  date: {
+    fontSize: 12,
+    color: "#888",
+    fontStyle: "italic",
+  },
   fab: {
     position: "absolute",
     bottom: 30,
@@ -321,12 +337,5 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 10,
     alignItems: "center",
-  },
-  date: {
-    fontSize: 12,
-    color: "#888",
-    marginTop: 10,
-    textAlign: "right",
-    fontStyle: "italic",
   },
 });

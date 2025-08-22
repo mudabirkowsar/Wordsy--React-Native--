@@ -7,6 +7,7 @@ import NoteEdit from "./src/screens/NoteEdit";
 import LockedNotesScreen from "./src/screens/LockedNotesScreen";
 import SetUpLockScreen from "./src/screens/SetUpLockScreen";
 import CheckPassword from "./src/screens/CheckPassword";
+import AddNotesScreen from "./src/screens/AddNotesScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +48,12 @@ export default function App() {
         <Stack.Screen
           name='CheckPassword'
           component={CheckPassword}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name='AddNote'
+          component={AddNotesScreen}
           options={{ headerShown: false }}
         />
 
