@@ -140,8 +140,13 @@ export default function Notes() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Notes List</Text>
-        <TouchableOpacity onPress={handleLockOption}>
-          <Ionicons name="lock-closed-outline" size={20} color="#000" />
+
+        {/* Stylish Lock Button */}
+        <TouchableOpacity
+          onPress={handleLockOption}
+          style={styles.lockButton}
+        >
+          <Ionicons name="lock-closed-outline" size={22} color="#fff" />
         </TouchableOpacity>
       </View>
 
@@ -242,26 +247,45 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 12,
+    backgroundColor: "#f8f9fa", // subtle light background
+    borderRadius: 12,
+    margin: 10,
+    elevation: 3, // shadow for android
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
   },
   headerTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000",
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#333",
   },
-  container: {
-    paddingVertical: 10,
+  lockButton: {
+    backgroundColor: "#4B7BEC", // blue color
+    padding: 10,
+    borderRadius: 10,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
   },
+
+  // Optional: make notes cards slightly more modern
   card: {
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 16,
+    padding: 18,
     marginVertical: 8,
-    width: "100%",
+    width: "95%",
+    alignSelf: "center",
     elevation: 3,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 18,
@@ -272,12 +296,13 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     color: "#444",
+    marginBottom: 8,
   },
   authorDateRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 6,
   },
   authorText: {
     fontSize: 12,

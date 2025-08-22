@@ -7,7 +7,7 @@ import {
     StyleSheet,
     Vibration,
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons"; // 👈 Make sure this is installed
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default function SetUpLockScreen({ navigation }) {
     const [pin, setPin] = useState("");
@@ -26,10 +26,9 @@ export default function SetUpLockScreen({ navigation }) {
     const handleConfirm = () => {
         if (pin.length === MAX_LENGTH) {
             Vibration.vibrate(30);
-            // alert("PIN set successfully: " + pin);
+            alert("PIN set successfully: " + pin);
             AsyncStorage.setItem("lockPassword", pin);
             navigation.replace('LockedNotes')
-            // add async storage logic here 
         }
     };
 

@@ -7,23 +7,23 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Alert,
   Pressable,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const dummyTodosData = [
-  { id: '1', text: 'Buy groceries' },
-  { id: '2', text: 'Finish React Native project' },
-  { id: '3', text: 'Go for a morning jog' },
-  { id: '4', text: 'Read 20 pages of a book' },
-  { id: '5', text: 'Call mom' },
-  { id: '6', text: 'Plan weekend trip' },
-  { id: '7', text: 'Clean the kitchen' },
+const initialTodos = [
+  { id: '1', text: 'Buy groceries', done: false, createdAt: new Date() },
+  { id: '2', text: 'Finish React Native project', done: false, createdAt: new Date() },
+  { id: '3', text: 'Go for a morning jog', done: false, createdAt: new Date() },
+  { id: '4', text: 'Read 20 pages of a book', done: false, createdAt: new Date() },
+  { id: '5', text: 'Call mom', done: false, createdAt: new Date() },
+  { id: '6', text: 'Plan weekend trip', done: false, createdAt: new Date() },
+  { id: '7', text: 'Clean the kitchen', done: false, createdAt: new Date() },
 ];
 
 export default function Todos() {
-  const [todos, setTodos] = useState(dummyTodosData);
+  const [todos, setTodos] = useState(initialTodos);
   const [modalVisible, setModalVisible] = useState(false);
   const [newTodo, setNewTodo] = useState('');
 
@@ -38,11 +38,22 @@ export default function Todos() {
     const todo = {
       id: (todos.length + 1).toString(),
       text: newTodo,
+      done: false,
+      createdAt: new Date(),
     };
 
     setTodos([todo, ...todos]);
     setNewTodo('');
     setModalVisible(false);
+  };
+
+  // Toggle checkbox
+  const toggleTodoDone = (todoId) => {
+    setTodos(
+      todos.map((t) =>
+        t.id === todoId ? { ...t, done: !t.done } : t
+      )
+    );
   };
 
   // Open view modal
@@ -71,21 +82,46 @@ export default function Todos() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>My Todo List</Text>
+      {/* <Text style={styles.header}>My Todo List</Text> */}
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {todos.map((todo, index) => (
           <Pressable
             key={todo.id}
             onPress={() => handleOpenTodo(todo)}
+            style={[
+              styles.todoCard,
+              { backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#d9f0ff' },
+            ]}
           >
-            <View
-              style={[
-                styles.todoCard,
-                { backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#d9f0ff' },
-              ]}
-            >
-              <Text style={styles.todoText}>{todo.text}</Text>
+            <View style={styles.todoRow}>
+              {/* Checkbox */}
+              <TouchableOpacity
+                onPress={() => toggleTodoDone(todo.id)}
+                style={[
+                  styles.checkbox,
+                  { backgroundColor: todo.done ? '#000' : '#fff' },
+                ]}
+              >
+                {todo.done && <Ionicons name="checkmark" size={16} color="#fff" />}
+              </TouchableOpacity>
+
+              {/* Todo text */}
+              <View style={{ flex: 1 }}>
+                <Text
+                  style={[
+                    styles.todoText,
+                    { textDecorationLine: todo.done ? 'line-through' : 'none' },
+                  ]}
+                >
+                  {todo.text}
+                </Text>
+
+                {/* Display creation time */}
+                <Text style={styles.todoDate}>
+                  Added: {todo.createdAt.toLocaleDateString()} - {todo.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </Text>
+              </View>
             </View>
           </Pressable>
         ))}
@@ -208,9 +244,28 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
   },
+  todoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 6,
+    marginRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   todoText: {
     fontSize: 16,
     color: '#000',
+  },
+  todoDate: {
+    fontSize: 12,
+    color: '#888',
+    marginTop: 4,
   },
   fab: {
     position: 'absolute',

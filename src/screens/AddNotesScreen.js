@@ -42,7 +42,6 @@ const AddNotesScreen = ({ navigation }) => {
             <Ionicons name="calendar" size={18} color="#4F46E5" />
             <Text style={styles.dateText}>{currentDate}</Text>
           </View>
-          {/* <Text style={styles.charCounter}>{description.length}/300</Text> */}
         </View>
 
         {/* Title */}
