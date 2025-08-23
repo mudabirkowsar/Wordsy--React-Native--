@@ -37,6 +37,24 @@ export const updateNote = async (id, updatedNote) => {
   }
 };
 
+// 📌 Toggle favorite status of a note (by id)
+export const toggleFavoriteNote = async (id) => {
+  try {
+    const existingNotes = await AsyncStorage.getItem(NOTES_KEY);
+    let notes = existingNotes ? JSON.parse(existingNotes) : [];
+
+    // find the note by id
+    notes = notes.map((note) =>
+      note.id === id ? { ...note, favorite: !note.favorite } : note
+    );
+
+    await AsyncStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+  } catch (error) {
+    console.error("Error toggling favorite note:", error);
+  }
+};
+
+
 // 📌 Delete a note (by id)
 export const deleteNote = async (id) => {
   try {

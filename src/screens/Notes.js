@@ -14,7 +14,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getNotes, deleteNote } from "../../asyncStorage/Storage";
+import { getNotes, deleteNote, toggleFavoriteNote } from "../../asyncStorage/Storage";
 
 const DUMMY_HAPTIC_DURATION = 20;
 
@@ -22,11 +22,13 @@ export default function Notes() {
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [successModalVisible, setSuccessModalVisible] = useState(false); // ✅ new state
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [lockPassword, setLockPassword] = useState("");
+  const [favoriteModalVisible, setFavoriteModalVisible] = useState(false);
+  const [favoriteMessage, setFavoriteMessage] = useState("");
 
   const navigation = useNavigation();
-  const isFocused = useIsFocused(); // track screen focus
+  const isFocused = useIsFocused();
 
   // 🔹 Fetch notes function
   const fetchNotes = useCallback(async () => {
@@ -82,13 +84,34 @@ export default function Notes() {
         });
         return updatedNotes;
       });
-    } else if (action === "edit") {
+    }
+
+    else if (action === "edit") {
       navigation.navigate("EditNote", { note: selectedNote });
-    } else if (action === "delete") {
+    }
+
+    else if (action === "delete") {
       deleteNote(selectedNote.id).then(() => {
-        fetchNotes(); // refresh immediately after delete
-        setSuccessModalVisible(true); // ✅ show success modal
-        setTimeout(() => setSuccessModalVisible(false), 2000); // hide after 2 sec
+        fetchNotes();
+        setSuccessModalVisible(true);
+        setTimeout(() => setSuccessModalVisible(false), 1500);
+      });
+    }
+
+    else if (action === "hide") {
+      Alert.alert("Hide");
+    }
+
+    else if (action === "favorite") {
+      toggleFavoriteNote(selectedNote.id).then(() => {
+        fetchNotes();
+        setFavoriteMessage(
+          selectedNote.favorite
+            ? "Removed from Favorites"
+            : "Added to Favorites"
+        );
+        setFavoriteModalVisible(true);
+        setTimeout(() => setFavoriteModalVisible(false), 1500);
       });
     }
   };
@@ -121,14 +144,20 @@ export default function Notes() {
                   backgroundColor: item.pinned
                     ? "#fffacd"
                     : index % 2 === 0
-                    ? "#f0f0f0"
-                    : "#d9f0ff",
+                      ? "#f0f0f0"
+                      : "#d9f0ff",
                 },
               ]}
             >
-              <Text style={styles.title}>
-                {item.title} {item.pinned ? "📌" : ""}
-              </Text>
+              <View style={styles.titleRow}>
+                <Text style={styles.title}>
+                  {item.title} {item.pinned ? "📌" : ""}
+                </Text>
+                {item.favorite && (
+                  <Ionicons name="heart" size={20} color="red" />
+                )}
+              </View>
+
               <Text
                 style={styles.description}
                 numberOfLines={4}
@@ -178,7 +207,11 @@ export default function Notes() {
               style={styles.modalButton}
             >
               <Ionicons
-                name={selectedNote?.pinned ? "remove-circle-outline" : "pin-outline"}
+                name={
+                  selectedNote?.pinned
+                    ? "remove-circle-outline"
+                    : "pin-outline"
+                }
                 size={20}
                 color="#000"
               />
@@ -193,6 +226,30 @@ export default function Notes() {
             >
               <Ionicons name="create-outline" size={20} color="#000" />
               <Text style={styles.modalButtonText}>Edit Note</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => handleAction("hide")}
+              style={styles.modalButton}
+            >
+              <Ionicons name="lock-closed-outline" size={20} />
+              <Text style={[styles.modalButtonText]}>Hide Note</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => handleAction("favorite")}
+              style={styles.modalButton}
+            >
+              <Ionicons
+                name={selectedNote?.favorite ? "heart" : "heart-outline"}
+                size={20}
+                color={selectedNote?.favorite ? "red" : "#000"}
+              />
+              <Text style={[styles.modalButtonText]}>
+                {selectedNote?.favorite
+                  ? "Remove from Favorites"
+                  : "Add to Favorites"}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -227,11 +284,31 @@ export default function Notes() {
           </View>
         </View>
       </Modal>
+
+      {/* ✅ Favorite Modal (auto hides) */}
+      <Modal
+        transparent={true}
+        visible={favoriteModalVisible}
+        animationType="fade"
+      >
+        <View style={styles.successOverlay}>
+          <View style={styles.successBox}>
+            <Text
+              style={[
+                styles.successText,
+                { color: favoriteMessage.includes("Removed") ? "red" : "green" },
+              ]}
+            >
+              {favoriteMessage}
+            </Text>
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 }
 
-// ------------------ Styles (unchanged, just added success modal) ------------------
 const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
@@ -276,10 +353,15 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     backgroundColor: "#fff",
   },
+  titleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6,
+  },
   title: {
     fontSize: 18,
     fontWeight: "700",
-    marginBottom: 6,
     color: "#000",
   },
   description: {
@@ -352,8 +434,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
-
-  // ✅ Success modal styles
   successOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.3)",
