@@ -1,25 +1,43 @@
-// AddNotesScreen.js
 import React, { useState } from "react";
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet 
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { addNote } from "../../asyncStorage/Storage";
 
 const AddNotesScreen = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [author, setAuthor] = useState("");
+  const [warning, setWarning] = useState(""); 
+  const [successModal, setSuccessModal] = useState(false); // ✅ Success modal state
 
   const currentDate = new Date().toLocaleDateString();
 
   const handleAddNote = () => {
-    console.log({ title, description, author, date: currentDate });
+    if (!title || !description || !author) {
+      setWarning("⚠️ All fields are required");
+      return;
+    }
+
+    setWarning("");
+    const id = Date.now().toString();
+    addNote({ id, title, description, author, currentDate });
+
+    // ✅ Show success modal
+    setSuccessModal(true);
+    setTimeout(() => {
+      setSuccessModal(false);
+      navigation.goBack(); // go back after success
+    }, 1500);
+
     setTitle("");
-    setDescription("");
+    setDescription(""); 
     setAuthor("");
   };
 
@@ -36,7 +54,7 @@ const AddNotesScreen = ({ navigation }) => {
 
       {/* Card */}
       <View style={styles.card}>
-        {/* Date + Character Counter */}
+        {/* Date */}
         <View style={styles.dateRow}>
           <View style={styles.dateBox}>
             <Ionicons name="calendar" size={18} color="#4F46E5" />
@@ -49,7 +67,10 @@ const AddNotesScreen = ({ navigation }) => {
           style={styles.input}
           placeholder="Title"
           value={title}
-          onChangeText={setTitle}
+          onChangeText={(text) => {
+            setTitle(text);
+            setWarning("");
+          }}
           placeholderTextColor="#9CA3AF"
         />
 
@@ -59,11 +80,16 @@ const AddNotesScreen = ({ navigation }) => {
             style={styles.textAreaInput}
             placeholder="Description"
             value={description}
-            onChangeText={setDescription}
+            onChangeText={(text) => {
+              setDescription(text);
+              setWarning("");
+            }}
             multiline
             placeholderTextColor="#9CA3AF"
           />
-          <Text style={styles.textAreaCounter}>{description.length} characters</Text>
+          <Text style={styles.textAreaCounter}>
+            {description.length} characters
+          </Text>
         </View>
 
         {/* Author */}
@@ -71,15 +97,36 @@ const AddNotesScreen = ({ navigation }) => {
           style={styles.input}
           placeholder="Author"
           value={author}
-          onChangeText={setAuthor}
+          onChangeText={(text) => {
+            setAuthor(text);
+            setWarning("");
+          }}
           placeholderTextColor="#9CA3AF"
         />
+
+        {/* Warning Message */}
+        {warning ? <Text style={styles.warning}>{warning}</Text> : null}
 
         {/* Add Button */}
         <TouchableOpacity style={styles.button} onPress={handleAddNote}>
           <Text style={styles.buttonText}>Add Now</Text>
         </TouchableOpacity>
       </View>
+
+      {/* ✅ Success Modal */}
+      <Modal
+        visible={successModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSuccessModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Ionicons name="checkmark-circle" size={50} color="#4CAF50" />
+            <Text style={styles.modalText}>Note Added Successfully!</Text>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -128,10 +175,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#4B5563",
     marginLeft: 5,
-  },
-  charCounter: {
-    fontSize: 13,
-    color: "#6B7280",
   },
   input: {
     backgroundColor: "#F9FAFB",
@@ -183,5 +226,32 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 17,
     fontWeight: "600",
+  },
+  warning: {
+    color: "#DC2626",
+    fontSize: 14,
+    fontWeight: "500",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  // ✅ Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 25,
+    borderRadius: 15,
+    alignItems: "center",
+    width: "80%",
+  },
+  modalText: {
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
   },
 });

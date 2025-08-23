@@ -1,6 +1,16 @@
-import { View, TextInput, StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+  Modal,
+} from "react-native";
 import React, { useState } from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { updateNote } from "../../asyncStorage/Storage";
 
 export default function NoteEdit({ route, navigation }) {
   const { note } = route.params;
@@ -8,8 +18,30 @@ export default function NoteEdit({ route, navigation }) {
   const [title, setTitle] = useState(note.title);
   const [description, setDescription] = useState(note.description);
 
+  const [warningVisible, setWarningVisible] = useState(false);
+  const [successVisible, setSuccessVisible] = useState(false);
+
   const handleSave = () => {
-    navigation.goBack();
+    if (!title.trim() || !description.trim()) {
+      setWarningVisible(true);
+      return;
+    }
+
+    updateNote(note.id, {
+      id: note.id,
+      title,
+      description,
+      author: note.author,
+      currentDate: note.currentDate,
+    });
+
+    setSuccessVisible(true);
+
+    // Hide success modal after 2 seconds and go back
+    setTimeout(() => {
+      setSuccessVisible(false);
+      navigation.goBack();
+    }, 2000);
   };
 
   const handleCancel = () => {
@@ -62,6 +94,42 @@ export default function NoteEdit({ route, navigation }) {
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.saveButtonText}>Save Changes</Text>
       </TouchableOpacity>
+
+      {/* Warning Modal */}
+      <Modal
+        visible={warningVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setWarningVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Ionicons name="warning" size={30} color="red" />
+            <Text style={styles.modalText}>All fields are required!</Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setWarningVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Success Modal */}
+      <Modal
+        visible={successVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSuccessVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Ionicons name="checkmark-circle" size={40} color="#4CAF50" />
+            <Text style={styles.modalText}>Note updated successfully!</Text>
+          </View>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }
@@ -136,5 +204,36 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "700",
     fontSize: 16,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalBox: {
+    backgroundColor: "#fff",
+    padding: 25,
+    borderRadius: 12,
+    alignItems: "center",
+    width: "80%",
+  },
+  modalText: {
+    fontSize: 16,
+    color: "#333",
+    marginVertical: 10,
+    textAlign: "center",
+  },
+  modalButton: {
+    marginTop: 15,
+    backgroundColor: "#4CAF50",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  modalButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
