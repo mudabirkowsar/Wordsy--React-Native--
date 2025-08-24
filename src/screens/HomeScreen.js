@@ -11,7 +11,7 @@ export default function HomeScreen() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const tabs = ["Notes", "To-do", "Favorite Notes"];
+  const tabs = ["Notes", "To-do", "Favorite Notes"]; 
 
   return (
     <View style={styles.container}>
