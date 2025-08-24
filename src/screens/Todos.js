@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,22 +8,21 @@ import {
   Modal,
   TextInput,
   Pressable,
+  Alert,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-const initialTodos = [
-  { id: '1', text: 'Buy groceries', done: false, createdAt: new Date() },
-  { id: '2', text: 'Finish React Native project', done: false, createdAt: new Date() },
-  { id: '3', text: 'Go for a morning jog', done: false, createdAt: new Date() },
-  { id: '4', text: 'Read 20 pages of a book', done: false, createdAt: new Date() },
-  { id: '5', text: 'Call mom', done: false, createdAt: new Date() },
-  { id: '6', text: 'Plan weekend trip', done: false, createdAt: new Date() },
-  { id: '7', text: 'Clean the kitchen', done: false, createdAt: new Date() },
-];
+import {
+  addTodo,
+  clearAllTodos,
+  deleteTodo,
+  getTodos,
+  toggleTodoCompleted,
+  updateTodo,
+} from '../../asyncStorage/todoStorage';
 
 export default function Todos() {
-  const [todos, setTodos] = useState(initialTodos);
+  const [todos, setTodos] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [newTodo, setNewTodo] = useState('');
 
@@ -31,29 +30,48 @@ export default function Todos() {
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const [editText, setEditText] = useState('');
 
+  const fetchTodos = async () => {
+    const data = await getTodos();
+    setTodos(data);
+  };
+
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
   // Add new todo
-  const handleAddTodo = () => {
+  const handleAddTodo = async () => {
     if (newTodo.trim() === '') return;
 
+    const id = Date.now().toString();
+    const currentDateTime = new Date().toLocaleString([], {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
     const todo = {
-      id: (todos.length + 1).toString(),
+      id,
       text: newTodo,
-      done: false,
-      createdAt: new Date(),
+      completed: false,
+      createdAt: currentDateTime,
     };
 
-    setTodos([todo, ...todos]);
+    await addTodo(todo).then(() => {
+      fetchTodos();
+    });
+
     setNewTodo('');
     setModalVisible(false);
   };
 
   // Toggle checkbox
-  const toggleTodoDone = (todoId) => {
-    setTodos(
-      todos.map((t) =>
-        t.id === todoId ? { ...t, done: !t.done } : t
-      )
-    );
+  const toggleTodoDone = async (id) => {
+    await toggleTodoCompleted(id).then(() => {
+      fetchTodos();
+    });
   };
 
   // Open view modal
@@ -64,26 +82,24 @@ export default function Todos() {
   };
 
   // Delete selected todo
-  const handleDeleteTodo = () => {
-    setTodos(todos.filter((t) => t.id !== selectedTodo.id));
+  const handleDeleteTodo = async (id) => {
+    await deleteTodo(id).then(() => {
+      fetchTodos();
+    });
     setViewModalVisible(false);
   };
 
   // Save edited todo
-  const handleEditTodo = () => {
-    if (editText.trim() === '') return;
-    setTodos(
-      todos.map((t) =>
-        t.id === selectedTodo.id ? { ...t, text: editText } : t
-      )
-    );
+  const handleEditTodo = async (id) => {
+    await updateTodo(id, { text: editText }).then(() => {
+      fetchTodos();
+    });
     setViewModalVisible(false);
   };
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.header}>My Todo List</Text> */}
-
+      {/* Todo List */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {todos.map((todo, index) => (
           <Pressable
@@ -100,10 +116,12 @@ export default function Todos() {
                 onPress={() => toggleTodoDone(todo.id)}
                 style={[
                   styles.checkbox,
-                  { backgroundColor: todo.done ? '#000' : '#fff' },
+                  { backgroundColor: todo.completed ? '#000' : '#fff' },
                 ]}
               >
-                {todo.done && <Ionicons name="checkmark" size={16} color="#fff" />}
+                {todo.completed && (
+                  <Ionicons name="checkmark" size={16} color="#fff" />
+                )}
               </TouchableOpacity>
 
               {/* Todo text */}
@@ -111,16 +129,18 @@ export default function Todos() {
                 <Text
                   style={[
                     styles.todoText,
-                    { textDecorationLine: todo.done ? 'line-through' : 'none' },
+                    {
+                      textDecorationLine: todo.completed
+                        ? 'line-through'
+                        : 'none',
+                    },
                   ]}
                 >
                   {todo.text}
                 </Text>
 
-                {/* Display creation time */}
-                <Text style={styles.todoDate}>
-                  Added: {todo.createdAt.toLocaleDateString()} - {todo.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </Text>
+                {/* Display creation date + time */}
+                <Text style={styles.todoDate}>Added: {todo.createdAt}</Text>
               </View>
             </View>
           </Pressable>
@@ -128,10 +148,7 @@ export default function Todos() {
       </ScrollView>
 
       {/* Floating Add Button */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => setModalVisible(true)}
-      >
+      <TouchableOpacity style={styles.fab} onPress={() => setModalVisible(true)}>
         <Entypo name="add-to-list" color="#fff" size={24} />
       </TouchableOpacity>
 
@@ -196,7 +213,7 @@ export default function Todos() {
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={[styles.modalButton, { backgroundColor: '#f0f0f0' }]}
-                onPress={handleDeleteTodo}
+                onPress={() => handleDeleteTodo(selectedTodo.id)}
               >
                 <Text style={[styles.modalButtonText, { color: 'red' }]}>
                   Delete
@@ -205,7 +222,7 @@ export default function Todos() {
 
               <TouchableOpacity
                 style={[styles.modalButton, { backgroundColor: '#000' }]}
-                onPress={handleEditTodo}
+                onPress={() => handleEditTodo(selectedTodo.id)}
               >
                 <Text style={[styles.modalButtonText, { color: '#fff' }]}>
                   Save

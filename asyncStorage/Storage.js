@@ -44,7 +44,6 @@ export const toggleFavoriteNote = async (id) => {
     const existingNotes = await AsyncStorage.getItem(NOTES_KEY);
     let notes = existingNotes ? JSON.parse(existingNotes) : [];
 
-    // find the note by id
     notes = notes.map((note) =>
       note.id === id ? { ...note, favorite: !note.favorite } : note
     );
@@ -55,6 +54,19 @@ export const toggleFavoriteNote = async (id) => {
   }
 };
 
+// Get only favorite notes 
+export const getFavoriteNotes = async () => {
+  try {
+    const existingNotes = await AsyncStorage.getItem(NOTES_KEY);
+    let notes = existingNotes ? JSON.parse(existingNotes) : [];
+    
+    // filter only favorite notes
+    return notes.filter((note) => note.favorite);
+  } catch (error) {
+    console.error("Error fetching favorite notes:", error);
+    return [];
+  }
+};
 
 // 📌 Delete a note (by id)
 export const deleteNote = async (id) => {
@@ -72,20 +84,16 @@ export const deleteNote = async (id) => {
 // ✅ Move note to hidden folder
 export const hideNote = async (id) => {
   try {
-    // Get existing notes
     const existingNotes = await AsyncStorage.getItem(NOTES_KEY);
     let notes = existingNotes ? JSON.parse(existingNotes) : [];
 
-    // Find the note to hide
     const noteToHide = notes.find((note) => note.id === id);
 
-    if (!noteToHide) return; // if note not found, just exit
+    if (!noteToHide) return; 
 
-    // Remove it from normal notes
     notes = notes.filter((note) => note.id !== id);
     await AsyncStorage.setItem(NOTES_KEY, JSON.stringify(notes));
 
-    // Add it to hidden notes
     const existingHidden = await AsyncStorage.getItem(HIDDEN_NOTES_KEY);
     const hiddenNotes = existingHidden ? JSON.parse(existingHidden) : [];
     hiddenNotes.push(noteToHide);
@@ -107,6 +115,7 @@ export const getHiddenNotes = async () => {
   }
 };
 
+// ✅ Delete Hidden note
 export const deleteHiddenNote = async (id) => {
   try {
     const existingNotes = await AsyncStorage.getItem(HIDDEN_NOTES_KEY);
@@ -121,19 +130,15 @@ export const deleteHiddenNote = async (id) => {
 // ✅ Unhide a Note (move back to normal notes)
 export const unhideNote = async (id) => {
   try {
-    // Get hidden notes
     const existingHidden = await AsyncStorage.getItem(HIDDEN_NOTES_KEY);
     let hiddenNotes = existingHidden ? JSON.parse(existingHidden) : [];
 
-    // Find note
     const noteToUnhide = hiddenNotes.find((note) => note.id === id);
     if (!noteToUnhide) return;
 
-    // Remove from hidden
     hiddenNotes = hiddenNotes.filter((note) => note.id !== id);
     await AsyncStorage.setItem(HIDDEN_NOTES_KEY, JSON.stringify(hiddenNotes));
 
-    // Add back to normal notes
     const existingNotes = await AsyncStorage.getItem(NOTES_KEY);
     const notes = existingNotes ? JSON.parse(existingNotes) : [];
     notes.push(noteToUnhide);
