@@ -11,13 +11,13 @@ export default function HomeScreen() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const tabs = ["Notes", "To-do", "Favorite Notes"]; 
+  const tabs = ["Notes", "To-do", "Favorite Notes"];
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Wordsy</Text>
+        <Text style={styles.title}><Text style={{ color: "#0000ffbd", fontSize: 30, }}>W</Text>ords<Text style={{ color: "#0000ffbd", fontSize: 30, }}>y</Text></Text>
         <TouchableOpacity onPress={() => setIsSearchFocused(!isSearchFocused)}>
           <AntDesign name="search1" color="#000" size={26} />
         </TouchableOpacity>
@@ -59,10 +59,10 @@ export default function HomeScreen() {
       </View>
 
       {/* Main Content */}
-      <View style={{flex:1}}>
-        {activeTab === "Notes" && <Notes searchQuery={searchQuery}/>}
-        {activeTab === "To-do" && <Todos searchQuery={searchQuery}/>}
-        {activeTab === "Favorite Notes" && <FavoriteNotes searchQuery={searchQuery}/>}
+      <View style={{ flex: 1 }}>
+        {activeTab === "Notes" && <Notes searchQuery={searchQuery} />}
+        {activeTab === "To-do" && <Todos searchQuery={searchQuery} />}
+        {activeTab === "Favorite Notes" && <FavoriteNotes searchQuery={searchQuery} />}
       </View>
     </View>
   );
@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     paddingTop: 50,
-    height:"100%",
-    width:'100%',
+    height: "100%",
+    width: '100%',
     backgroundColor: "#fff",
     // flex: 1,
   },
