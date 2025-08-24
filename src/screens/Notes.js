@@ -4,7 +4,6 @@ import {
   StyleSheet,
   FlatList,
   Pressable,
-  Alert,
   TouchableOpacity,
   Modal,
   Vibration,
@@ -14,7 +13,13 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getNotes, deleteNote, toggleFavoriteNote } from "../../asyncStorage/Storage";
+import {
+  getNotes,
+  deleteNote,
+  toggleFavoriteNote,
+  clearNotes,
+  hideNote,
+} from "../../asyncStorage/Storage";
 
 const DUMMY_HAPTIC_DURATION = 20;
 
@@ -26,6 +31,8 @@ export default function Notes() {
   const [lockPassword, setLockPassword] = useState("");
   const [favoriteModalVisible, setFavoriteModalVisible] = useState(false);
   const [favoriteMessage, setFavoriteMessage] = useState("");
+  const [clearModalVisible, setClearModalVisible] = useState(false);
+  const [hideModalVisible, setHideModalVisible] = useState(false); // ✅ new
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -84,25 +91,21 @@ export default function Notes() {
         });
         return updatedNotes;
       });
-    }
-
-    else if (action === "edit") {
+    } else if (action === "edit") {
       navigation.navigate("EditNote", { note: selectedNote });
-    }
-
-    else if (action === "delete") {
+    } else if (action === "delete") {
       deleteNote(selectedNote.id).then(() => {
         fetchNotes();
         setSuccessModalVisible(true);
         setTimeout(() => setSuccessModalVisible(false), 1500);
       });
-    }
-
-    else if (action === "hide") {
-      Alert.alert("Hide");
-    }
-
-    else if (action === "favorite") {
+    } else if (action === "hide") {
+      hideNote(selectedNote.id).then(() => {
+        fetchNotes();
+        setHideModalVisible(true); // ✅ show modal
+        setTimeout(() => setHideModalVisible(false), 1500);
+      });
+    } else if (action === "favorite") {
       toggleFavoriteNote(selectedNote.id).then(() => {
         fetchNotes();
         setFavoriteMessage(
@@ -116,22 +119,44 @@ export default function Notes() {
     }
   };
 
+  const clearAllNotes = async () => {
+    try {
+      await clearNotes();
+      setNotes([]);
+      setClearModalVisible(false);
+    } catch (error) {
+      console.error("Error clearing all notes:", error);
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Notes List</Text>
 
-        <TouchableOpacity onPress={handleLockOption} style={styles.lockButton}>
-          <Ionicons name="lock-closed-outline" size={22} color="#fff" />
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <TouchableOpacity onPress={handleLockOption} style={styles.lockButton}>
+            <Ionicons name="lock-closed-outline" size={22} color="#fff" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setClearModalVisible(true)}
+            style={[styles.lockButton, { backgroundColor: "red" }]}
+          >
+            <Ionicons name="trash-outline" size={22} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Notes List */}
       <FlatList
         data={notes}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.container}
+        contentContainerStyle={[
+          styles.container,
+          notes.length === 0 && { flex: 1, justifyContent: "center" },
+        ]}
         renderItem={({ item, index }) => (
           <Pressable
             onLongPress={() => handleLongPress(item)}
@@ -153,9 +178,7 @@ export default function Notes() {
                 <Text style={styles.title}>
                   {item.title} {item.pinned ? "📌" : ""}
                 </Text>
-                {item.favorite && (
-                  <Ionicons name="heart" size={20} color="red" />
-                )}
+                {item.favorite && <Ionicons name="heart" size={20} color="red" />}
               </View>
 
               <Text
@@ -169,14 +192,17 @@ export default function Notes() {
               {/* Author + Date Row */}
               <View style={styles.authorDateRow}>
                 <Text style={styles.authorText}>{item.author || "Unknown"}</Text>
-                <Text style={styles.date}>
-                  {item.currentDate}
-                  {item.currentTime ? ` • ${item.currentTime}` : ""}
-                </Text>
+                <Text style={styles.date}>{item.currentDate}</Text>
               </View>
             </View>
           </Pressable>
         )}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.book}>📚</Text>
+            <Text style={styles.emptyText}>No notes found. Add one to get started!</Text>
+          </View>
+        }
       />
 
       {/* Floating Button */}
@@ -272,12 +298,8 @@ export default function Notes() {
         </View>
       </Modal>
 
-      {/* ✅ Success Modal (auto hides) */}
-      <Modal
-        transparent={true}
-        visible={successModalVisible}
-        animationType="fade"
-      >
+      {/* ✅ Success Modal (Delete) */}
+      <Modal transparent={true} visible={successModalVisible} animationType="fade">
         <View style={styles.successOverlay}>
           <View style={styles.successBox}>
             <Text style={styles.successText}>✅ Note deleted successfully!</Text>
@@ -285,12 +307,8 @@ export default function Notes() {
         </View>
       </Modal>
 
-      {/* ✅ Favorite Modal (auto hides) */}
-      <Modal
-        transparent={true}
-        visible={favoriteModalVisible}
-        animationType="fade"
-      >
+      {/* ✅ Favorite Modal */}
+      <Modal transparent={true} visible={favoriteModalVisible} animationType="fade">
         <View style={styles.successOverlay}>
           <View style={styles.successBox}>
             <Text
@@ -305,6 +323,53 @@ export default function Notes() {
         </View>
       </Modal>
 
+      {/* ✅ Hide Modal */}
+      <Modal transparent={true} visible={hideModalVisible} animationType="fade">
+        <View style={styles.successOverlay}>
+          <View style={styles.successBox}>
+            <Text style={styles.successText}>🙈 Note hidden successfully!</Text>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ✅ Clear All Confirmation Modal */}
+      <Modal
+        transparent={true}
+        visible={clearModalVisible}
+        animationType="fade"
+        onRequestClose={() => setClearModalVisible(false)}
+      >
+        <View style={styles.successOverlay}>
+          <View style={styles.successBox}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "700",
+                marginBottom: 15,
+                color: "black",
+              }}
+            >
+              Are you sure you want to clear all notes?
+            </Text>
+            <View style={{ flexDirection: "row", gap: 15 }}>
+              <TouchableOpacity
+                style={[styles.closeButton, { backgroundColor: "red", flex: 1 }]}
+                onPress={clearAllNotes}
+              >
+                <Text style={{ color: "#fff", fontWeight: "600" }}>
+                  Clear All
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.closeButton, { backgroundColor: "gray", flex: 1 }]}
+                onPress={() => setClearModalVisible(false)}
+              >
+                <Text style={{ color: "#fff", fontWeight: "600" }}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -445,10 +510,28 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 12,
     elevation: 5,
+    width: "80%",
   },
   successText: {
     fontSize: 16,
     fontWeight: "600",
     color: "green",
+    textAlign: "center",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#666",
+    textAlign: "center",
+  },
+  book: {
+    fontSize: 36,
+    marginBottom: 20,
   },
 });
