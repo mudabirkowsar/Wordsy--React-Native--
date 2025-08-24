@@ -59,7 +59,7 @@ export const getFavoriteNotes = async () => {
   try {
     const existingNotes = await AsyncStorage.getItem(NOTES_KEY);
     let notes = existingNotes ? JSON.parse(existingNotes) : [];
-    
+
     // filter only favorite notes
     return notes.filter((note) => note.favorite);
   } catch (error) {
@@ -89,7 +89,7 @@ export const hideNote = async (id) => {
 
     const noteToHide = notes.find((note) => note.id === id);
 
-    if (!noteToHide) return; 
+    if (!noteToHide) return;
 
     notes = notes.filter((note) => note.id !== id);
     await AsyncStorage.setItem(NOTES_KEY, JSON.stringify(notes));
@@ -146,6 +146,31 @@ export const unhideNote = async (id) => {
     await AsyncStorage.setItem(NOTES_KEY, JSON.stringify(notes));
   } catch (error) {
     console.error("Error unhiding note:", error);
+  }
+};
+
+export const searchNotes = async (query) => {
+  try {
+    const existingNotes = await AsyncStorage.getItem(NOTES_KEY);
+    let notes = existingNotes ? JSON.parse(existingNotes) : [];
+
+    if (!query || query.trim() === "") {
+      return notes; // return all if query is empty
+    }
+
+    const lowerQuery = query.toLowerCase();
+
+    const filtered = notes.filter(
+      (note) =>
+        note.title?.toLowerCase().includes(lowerQuery) ||
+        // note.description?.toLowerCase().includes(lowerQuery) ||
+        note.author?.toLowerCase().includes(lowerQuery)
+    );
+
+    return filtered;
+  } catch (error) {
+    console.error("Error searching notes:", error);
+    return [];
   }
 };
 

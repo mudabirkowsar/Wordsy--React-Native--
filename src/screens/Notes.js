@@ -19,11 +19,12 @@ import {
   toggleFavoriteNote,
   clearNotes,
   hideNote,
+  searchNotes,
 } from "../../asyncStorage/Storage";
 
 const DUMMY_HAPTIC_DURATION = 20;
 
-export default function Notes() {
+export default function Notes({searchQuery}) {
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -32,10 +33,17 @@ export default function Notes() {
   const [favoriteModalVisible, setFavoriteModalVisible] = useState(false);
   const [favoriteMessage, setFavoriteMessage] = useState("");
   const [clearModalVisible, setClearModalVisible] = useState(false);
-  const [hideModalVisible, setHideModalVisible] = useState(false); // ✅ new
+  const [hideModalVisible, setHideModalVisible] = useState(false); 
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
+
+
+  const searchedNotes = async() => {
+    const data = await searchNotes(searchQuery)
+    setNotes(data);
+  }
+  searchedNotes();
 
   // 🔹 Fetch notes function
   const fetchNotes = useCallback(async () => {

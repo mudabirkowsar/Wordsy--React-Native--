@@ -1,5 +1,5 @@
 // HomeScreen.js
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import React, { useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Notes from "./Notes";
@@ -30,7 +30,7 @@ export default function HomeScreen() {
             <AntDesign name="search1" size={20} color="gray" style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search notes..."
+              placeholder="Search notes by Title or Author..."
               placeholderTextColor="gray"
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -60,9 +60,9 @@ export default function HomeScreen() {
 
       {/* Main Content */}
       <View style={{flex:1}}>
-        {activeTab === "Notes" && <Notes/>}
-        {activeTab === "To-do" && <Todos/>}
-        {activeTab === "Favorite Notes" && <FavoriteNotes/>}
+        {activeTab === "Notes" && <Notes searchQuery={searchQuery}/>}
+        {activeTab === "To-do" && <Todos searchQuery={searchQuery}/>}
+        {activeTab === "Favorite Notes" && <FavoriteNotes searchQuery={searchQuery}/>}
       </View>
     </View>
   );

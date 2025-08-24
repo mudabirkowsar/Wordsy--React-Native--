@@ -8,7 +8,6 @@ import {
   Modal,
   TextInput,
   Pressable,
-  Alert,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -59,19 +58,16 @@ export default function Todos() {
       createdAt: currentDateTime,
     };
 
-    await addTodo(todo).then(() => {
-      fetchTodos();
-    });
-
+    await addTodo(todo);
+    fetchTodos();
     setNewTodo('');
     setModalVisible(false);
   };
 
   // Toggle checkbox
   const toggleTodoDone = async (id) => {
-    await toggleTodoCompleted(id).then(() => {
-      fetchTodos();
-    });
+    await toggleTodoCompleted(id);
+    fetchTodos();
   };
 
   // Open view modal
@@ -83,69 +79,65 @@ export default function Todos() {
 
   // Delete selected todo
   const handleDeleteTodo = async (id) => {
-    await deleteTodo(id).then(() => {
-      fetchTodos();
-    });
+    await deleteTodo(id);
+    fetchTodos();
     setViewModalVisible(false);
   };
 
   // Save edited todo
   const handleEditTodo = async (id) => {
-    await updateTodo(id, { text: editText }).then(() => {
-      fetchTodos();
-    });
+    await updateTodo(id, { text: editText });
+    fetchTodos();
     setViewModalVisible(false);
   };
 
   return (
     <View style={styles.container}>
       {/* Todo List */}
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {todos.map((todo, index) => (
-          <Pressable
-            key={todo.id}
-            onPress={() => handleOpenTodo(todo)}
-            style={[
-              styles.todoCard,
-              { backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#d9f0ff' },
-            ]}
-          >
-            <View style={styles.todoRow}>
-              {/* Checkbox */}
-              <TouchableOpacity
-                onPress={() => toggleTodoDone(todo.id)}
-                style={[
-                  styles.checkbox,
-                  { backgroundColor: todo.completed ? '#000' : '#fff' },
-                ]}
-              >
-                {todo.completed && (
-                  <Ionicons name="checkmark" size={16} color="#fff" />
-                )}
-              </TouchableOpacity>
-
-              {/* Todo text */}
-              <View style={{ flex: 1 }}>
-                <Text
-                  style={[
-                    styles.todoText,
-                    {
-                      textDecorationLine: todo.completed
-                        ? 'line-through'
-                        : 'none',
-                    },
-                  ]}
+      {todos.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyEmoji}>📝</Text>
+          <Text style={styles.emptyText}>No todos yet. Add one to get started!</Text>
+        </View>
+      ) : (
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          {todos.map((todo, index) => (
+            <Pressable
+              key={todo.id}
+              onPress={() => handleOpenTodo(todo)}
+              style={[
+                styles.todoCard,
+                { backgroundColor: index % 2 === 0 ? '#f0f0f0' : '#d9f0ff' },
+              ]}
+            >
+              <View style={styles.todoRow}>
+                {/* Checkbox */}
+                <TouchableOpacity
+                  onPress={() => toggleTodoDone(todo.id)}
+                  style={[styles.checkbox, { backgroundColor: todo.completed ? '#000' : '#fff' }]}
                 >
-                  {todo.text}
-                </Text>
+                  {todo.completed && <Ionicons name="checkmark" size={16} color="#fff" />}
+                </TouchableOpacity>
 
-                {/* Display creation date + time */}
-                <Text style={styles.todoDate}>Added: {todo.createdAt}</Text>
+                {/* Todo text */}
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={[
+                      styles.todoText,
+                      { textDecorationLine: todo.completed ? 'line-through' : 'none' },
+                    ]}
+                  >
+                    {todo.text}
+                  </Text>
+
+                  {/* Display creation date + time */}
+                  <Text style={styles.todoDate}>Added: {todo.createdAt}</Text>
+                </View>
               </View>
-            </View>
-          </Pressable>
-        ))}
-      </ScrollView>
+            </Pressable>
+          ))}
+        </ScrollView>
+      )}
 
       {/* Floating Add Button */}
       <TouchableOpacity style={styles.fab} onPress={() => setModalVisible(true)}>
@@ -175,18 +167,14 @@ export default function Todos() {
                 style={[styles.modalButton, { backgroundColor: '#f0f0f0' }]}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={[styles.modalButtonText, { color: '#333' }]}>
-                  Cancel
-                </Text>
+                <Text style={[styles.modalButtonText, { color: '#333' }]}>Cancel</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={[styles.modalButton, { backgroundColor: '#000' }]}
                 onPress={handleAddTodo}
               >
-                <Text style={[styles.modalButtonText, { color: '#fff' }]}>
-                  Add
-                </Text>
+                <Text style={[styles.modalButtonText, { color: '#fff' }]}>Add</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -215,18 +203,14 @@ export default function Todos() {
                 style={[styles.modalButton, { backgroundColor: '#f0f0f0' }]}
                 onPress={() => handleDeleteTodo(selectedTodo.id)}
               >
-                <Text style={[styles.modalButtonText, { color: 'red' }]}>
-                  Delete
-                </Text>
+                <Text style={[styles.modalButtonText, { color: 'red' }]}>Delete</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={[styles.modalButton, { backgroundColor: '#000' }]}
                 onPress={() => handleEditTodo(selectedTodo.id)}
               >
-                <Text style={[styles.modalButtonText, { color: '#fff' }]}>
-                  Save
-                </Text>
+                <Text style={[styles.modalButtonText, { color: '#fff' }]}>Save</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -242,11 +226,6 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     padding: 16,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 16,
   },
   scrollContainer: {
     paddingBottom: 100,
@@ -346,5 +325,21 @@ const styles = StyleSheet.create({
   modalButtonText: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 50,
+  },
+  emptyText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  emptyEmoji: {
+    fontSize: 48,
   },
 });
