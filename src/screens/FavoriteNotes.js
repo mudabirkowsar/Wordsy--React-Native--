@@ -152,18 +152,6 @@ export default function FavoriteNotes({searchQuery}) {
         }
       />
 
-      {/* Floating Button */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => navigation.navigate("AddNote")}
-      >
-        <MaterialCommunityIcons
-          name="note-plus-outline"
-          color="white"
-          size={24}
-        />
-      </TouchableOpacity>
-
       {/* Long Press Options Modal */}
       <Modal
         transparent={true}
@@ -358,22 +346,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#888",
     fontStyle: "italic",
-  },
-  fab: {
-    position: "absolute",
-    bottom: 30,
-    right: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "black",
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 4,
   },
   modalOverlay: {
     flex: 1,
